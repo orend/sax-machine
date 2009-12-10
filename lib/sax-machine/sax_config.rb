@@ -15,8 +15,8 @@ module SAXMachine
     end
     
     def initialize_copy(sax_config)
-      @top_level_elements = sax_config.top_level_elements.clone
-      @collection_elements = sax_config.collection_elements.clone
+      @top_level_elements  = deep_clone_elements(sax_config.top_level_elements)
+      @collection_elements = deep_clone_elements(sax_config.collection_elements)
     end
 
     def add_top_level_element(name, options)
@@ -42,6 +42,11 @@ module SAXMachine
     def element_config_for_tag(name, attrs)
       tes = @top_level_elements[name.to_s]
       tes && tes.detect { |ec| ec.attrs_match?(attrs) }
+    end
+    
+    private
+    def deep_clone_elements(hash)
+      hash.inject({}) {|clone, (key, value)| clone.update(key => value.map {|c| c.clone})}
     end
   end
 end

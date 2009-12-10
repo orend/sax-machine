@@ -22,7 +22,7 @@ module SAXMachine
     def element(name, options = {})
       options[:as] ||= name
       sax_config.add_top_level_element(name, options)
-      
+
       # we only want to insert the getter and setter if they haven't defined it from elsewhere.
       # this is how we allow custom parsing behavior. So you could define the setter
       # and have it parse the string into a date or whatever.
@@ -77,6 +77,14 @@ module SAXMachine
     def sax_config
       @sax_config ||= SAXConfig.new
     end
+    
+    def sax_config=(config)
+      @sax_config = config
+    end
+    
+    def inherited(klass)
+      klass.sax_config = sax_config.clone
+      super
+    end    
   end
-  
 end

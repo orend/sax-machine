@@ -524,4 +524,34 @@ describe "SAXMachine" do
       @item.title.should == "Hello"
     end
   end
+  
+  describe "when using inheritance" do
+    before do
+      class Parent
+        include SAXMachine
+        element :item, :value => :id, :as => :parent_id
+        element :item, :value => :title, :as => :title
+      end
+      
+      class Child < Parent
+        element :item, :value => :id, :as => :item_id
+        element :item, :value => :name, :as => :name
+      end
+      @xml = %[<item id="1" name="item" title="testing"/>]
+    end
+    
+    it "should parse with the parent class" do
+      item = Parent.parse(@xml)
+      item.parent_id.should == '1'
+      item.title.should == 'testing'
+      item.should_not respond_to(:name)
+    end
+    
+    it "should parse with the child class" do
+      item = Child.parse(@xml)
+      item.item_id.should == '1'
+      item.title.should == 'testing'
+      item.name.should == 'item'
+    end
+  end
 end
