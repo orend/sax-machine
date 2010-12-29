@@ -20,6 +20,7 @@ module SAXMachine
       return unless object.class.respond_to?(:sax_config)
       
       sax_config = object.class.sax_config
+      attrs.flatten!
 
       if collection_config = sax_config.collection_config(name, attrs)
         stack.push [object = collection_config.data_class.new, collection_config, ""]
